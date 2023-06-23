@@ -96,6 +96,7 @@ def cli():
 
         case 'ed':
             disconnect()
+            patched_print('Disconnected.')
 
         case _:
             patched_print('Invalid option')
@@ -145,5 +146,5 @@ if __name__ == '__main__':
     if not path.exists(dir):
         makedirs(dir)
 
-    connect('N55', 5000) # test connection
+    # connect('N55', 5000) # test connection
     cli()

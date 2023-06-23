@@ -41,6 +41,7 @@ def server_program():
 
             case 'ed':
                 conn.close()
+                print('Terminated')
                 break
 
 
