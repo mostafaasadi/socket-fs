@@ -2,7 +2,7 @@ import socket
 from time import sleep
 from json import loads
 from os import path, makedirs
-from utils import send_msg, upload_file, dir_ls, download_file
+from utils import send_msg, upload_file, dir_ls, download_file, del_file
 
 
 def server_program():
@@ -31,6 +31,14 @@ def server_program():
                 if download_file(conn, path):
                     print(f'\t{path} Recieved successfully!')
             
+            case 'del':
+                path = f'{dir}/{data["name"]}'
+                if del_file(path):
+                    print(f'\t{path} Deleted successfully!')
+                    send_msg(conn, {'msg': 'del', 'status': True})
+                else:
+                    send_msg(conn, {'msg': 'del', 'status': False})
+
             case 'ed':
                 conn.close()
                 break

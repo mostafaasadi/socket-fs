@@ -18,6 +18,7 @@ def cli():
                     Choice(value='l', name="List"),
                     Choice(value='d', name="Download"),
                     Choice(value='u', name="Upload"),
+                    Choice(value='del', name="Delete"),
                     Choice(value='ed', name="Exit & Disconnect")
                 ],
                 "default": 'c',
@@ -78,8 +79,27 @@ def cli():
                 patched_print(f'\t{path} Uploaded successfully!')
             cli()
 
+        case 'del':
+            ld = get_dir_ls()
+            del_question = [{
+                "type": "rawlist",
+                "choices": ld,
+                "message": "Select file to Delete:",
+                "multiselect": False,
+                "validate": lambda result: len(result) > 0,
+                "invalid_message": "Select a file"
+            }]
+            del_answers = prompt(del_question)
+            if get_del(del_answers[0]):
+                patched_print(f'\t{del_answers[0]} Deleted successfully!')  
+            cli()
+
         case 'ed':
             disconnect()
+
+        case _:
+            patched_print('Invalid option')
+            cli()
 
 
 def connect(host, port):
@@ -104,6 +124,15 @@ def get_dir_ls():
         send_msg(sc, {'msg': 'list'})
         data = sc.recv(bs).decode()  # receive response
         return loads(data).get('list')
+    except Exception as e:
+        patched_print(e)
+
+
+def get_del(file_name):
+    try:
+        send_msg(sc, {'msg': 'del', 'name': file_name})
+        data = sc.recv(bs).decode()  # receive response
+        return loads(data).get('status')
     except Exception as e:
         patched_print(e)
 

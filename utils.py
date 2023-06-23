@@ -1,5 +1,5 @@
-from os import listdir
 from json import dumps, loads
+from os import listdir, remove
 from base64 import b64encode, b64decode
 
 
@@ -19,6 +19,15 @@ def dir_ls(path):
     except Exception as e:
         print(e)
         return ['Error on file system']
+
+
+def del_file(path):
+    try:
+        remove(path)
+        return True
+    except Exception as e:
+        print(e)
+        return False
 
 
 def upload_file(conn, path):
