@@ -1,13 +1,9 @@
 import socket
 from time import sleep
 from json import loads
-from utils import send_msg, send_file
-from os import listdir, path, makedirs
+from os import path, makedirs
+from utils import send_msg, upload_file, dir_ls, download_file
 
-
-def dir_ls():
-    ld = listdir(dir)
-    return ld
 
 def server_program():
     conn, address = ss.accept()  # accept new connection
@@ -22,12 +18,18 @@ def server_program():
 
         match data['msg']:
             case 'list':
-                ld = dir_ls()
+                ld = dir_ls(dir)
                 send_msg(conn, {'list': ld})
             
             case 'd':
                 path = f'{dir}/{data["name"]}'
-                send_file(conn, path)
+                if upload_file(conn, path):
+                    print(f'\t{path} sended successfully!')
+
+            case 'u':
+                path = f'{dir}/{data["name"]}'
+                if download_file(conn, path):
+                    print(f'\t{path} Recieved successfully!')
             
             case 'ed':
                 conn.close()

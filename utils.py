@@ -1,3 +1,4 @@
+from os import listdir
 from json import dumps, loads
 from base64 import b64encode, b64decode
 
@@ -9,7 +10,18 @@ def send_msg(conn, msg):
         print(e)
 
 
-def send_file(conn, path):
+def dir_ls(path):
+    try:
+        ld = listdir(path)
+        if len(ld) == 0:
+            return ['Empty Directory']
+        return ld
+    except Exception as e:
+        print(e)
+        return ['Error on file system']
+
+
+def upload_file(conn, path):
     try:
         with open(path, 'rb') as f:
             d = f.read()
@@ -22,11 +34,13 @@ def send_file(conn, path):
             smsg = dumps(msg).encode('utf-8')
             conn.sendall(len(smsg).to_bytes(4, byteorder='big'))
             conn.sendall(smsg)
+        return True
     except Exception as e:
         print(e)
+        return False
 
 
-def download(con, path):
+def download_file(con, path):
     try:
         data_size = int.from_bytes(con.recv(4), byteorder='big') # get size in first 4 bytes
 
@@ -37,7 +51,8 @@ def download(con, path):
                 break
             data += packet
         if len(data) != data_size:
-            raise RuntimeError(f"Expected {data_size} bytes but received {len(data)} bytes")
+            print(f"Expected {data_size} bytes but received {len(data)} bytes")
+            return False
 
         # Decode data from Base64 and save to file
         decoded_data = loads(data.decode())
