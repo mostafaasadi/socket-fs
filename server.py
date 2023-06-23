@@ -1,8 +1,8 @@
 import socket
-from os import listdir
 from time import sleep
 from json import loads
 from utils import send_msg, send_file
+from os import listdir, path, makedirs
 
 
 def dir_ls():
@@ -43,9 +43,11 @@ if __name__ == '__main__':
 
     # get the hostname
     host = socket.gethostname()
-    print(f'server on {host}:{port} is running ...')
+    if not path.exists(dir):
+        makedirs(dir)
     ss = socket.socket()  # get instance
     ss.bind((host, port))  # bind host address and port together
+    print(f'server on {host}:{port} is running ...')
 
     # configure how many client the server can listen simultaneously
     ss.listen(2)

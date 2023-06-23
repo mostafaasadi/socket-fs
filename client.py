@@ -1,6 +1,7 @@
 import socket
 from json import loads
 from InquirerPy import prompt
+from os import path, makedirs
 from InquirerPy.base import Choice
 from utils import send_msg, download
 from InquirerPy.utils import patched_print, color_print
@@ -94,5 +95,9 @@ if __name__ == '__main__':
     sc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     bs = 4096
     dir = 'horizon'
+
+    if not path.exists(dir):
+        makedirs(dir)
+
     connect('N55', 5000) # test connection
     cli()
