@@ -1,20 +1,13 @@
 import socket
 from os import listdir
-from json import dumps
 from time import sleep
+from json import loads
+from utils import send_msg, send_file
 
 
 def dir_ls():
     ld = listdir(dir)
     return ld
-
-
-def send_msg(conn, msg):
-    try:
-        conn.send(dumps(msg).encode())
-    except Exception as e:
-        print(e)
-
 
 def server_program():
     conn, address = ss.accept()  # accept new connection
@@ -22,12 +15,21 @@ def server_program():
     data = None
     while True:
         sleep(st) # cpu usage
-        data = conn.recv(bs).decode()
-        match data:
+        de = conn.recv(bs).decode()
+        if not de:
+            continue
+        data = loads(de)
+
+        match data['msg']:
             case 'list':
                 ld = dir_ls()
                 send_msg(conn, {'list': ld})
+            
             case 'd':
+                path = f'{dir}/{data["name"]}'
+                send_file(conn, path)
+            
+            case 'ed':
                 conn.close()
                 break
 
@@ -35,7 +37,7 @@ def server_program():
 if __name__ == '__main__':
     # Configs
     port = 5000
-    bs = 2048 # buffer size
+    bs = 4096 # buffer size
     dir = 'blackhole' # directory
     st = 0.001 # sleep time
 
